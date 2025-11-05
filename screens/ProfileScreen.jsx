@@ -9,7 +9,6 @@ export default function ProfileScreen() {
         <Text style={styles.name}>Kjento Cheyns</Text>
         <Text style={styles.role}>Graduaat Programmeren – Vives Kortrijk</Text>
         <Text style={styles.contact}>Email: kjento.cheyns@student.vives.be</Text>
-        <Text style={styles.note}>Liefhebber van technologie, games en Pokémon.</Text>
       </View>
     </View>
   );

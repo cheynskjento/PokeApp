@@ -19,7 +19,7 @@ function HomeStack() {
 
 export default function MainNavigator() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: true }}>
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
