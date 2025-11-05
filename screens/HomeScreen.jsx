@@ -1,14 +1,10 @@
-import { fetchPokemonList } from '../api/PokemonApi';
-import SearchSortBar from '../components/SearchSortBar';
-import { FlashList } from '@shopify/flash-list';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import { fetchPokemonList } from '../api/PokemonApi';
 
 export default function HomeScreen({ navigation }) {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [search, setSearch] = useState('');
-  const [sortAsc, setSortAsc] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -18,7 +14,6 @@ export default function HomeScreen({ navigation }) {
       try {
         const list = await fetchPokemonList();
         setData(list);
-        setFilteredData(list);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -29,17 +24,6 @@ export default function HomeScreen({ navigation }) {
     load();
     return () => console.log('HomeScreen unmounted');
   }, []);
-
-  // Filter + sort
-  useEffect(() => {
-    const temp = data.filter(item =>
-      item.name.toLowerCase().includes(search.toLowerCase())
-    );
-    temp.sort((a, b) =>
-      sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-    );
-    setFilteredData(temp);
-  }, [search, sortAsc, data]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -56,30 +40,18 @@ export default function HomeScreen({ navigation }) {
     </TouchableOpacity>
   );
 
+  if (loading) return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
+  if (error) return <Text style={styles.centerText}>Error fetching Pokémon!</Text>;
+
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-      <SearchSortBar
-        search={search}
-        setSearch={setSearch}
-        sortAsc={sortAsc}
-        setSortAsc={setSortAsc}
+      <FlashList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        estimatedItemSize={80}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
-
-      {loading && <ActivityIndicator size="large" style={{ marginTop: 50 }} />}
-      {error && <Text style={styles.centerText}>Error fetching Pokémon!</Text>}
-      {!loading && !error && filteredData.length === 0 && (
-        <Text style={styles.centerText}>No Pokémon found.</Text>
-      )}
-
-      {!loading && !error && filteredData.length > 0 && (
-        <FlashList
-          data={filteredData}
-          renderItem={renderItem}
-          keyExtractor={item => item.id.toString()}
-          estimatedItemSize={80}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        />
-      )}
     </View>
   );
 }
