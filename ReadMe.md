@@ -28,13 +28,10 @@ Zoeken, sorteren en filteren kunnen tegelijkertijd worden gebruikt, waardoor de 
 - **Pokémon lijst:**  
 https://pokeapi.co/api/v2/pokemon?limit=50
 
-markdown
-Code kopiëren
+
 - **Pokémon detail:**  
 https://pokeapi.co/api/v2/pokemon/{id}/
 
-yaml
-Code kopiëren
 
 De app haalt eerst een lijst van Pokémon op en doet daarna individuele requests om volledige details per Pokémon op te halen.
 

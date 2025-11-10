@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { fetchPokemonList } from '../api/PokemonApi';
 import SearchSortBar from '../Components/SearchSortBar';
+import PokemonCard from '../Components/PokemonCard';
 
 export default function HomeScreen({ navigation }) {
   const [data, setData] = useState([]);
@@ -21,10 +22,10 @@ export default function HomeScreen({ navigation }) {
         const list = await fetchPokemonList();
         setData(list);
         setFilteredData(list);
-        setLoading(false);
       } catch (err) {
         console.error(err);
         setError(true);
+      } finally {
         setLoading(false);
       }
     };
@@ -50,24 +51,11 @@ export default function HomeScreen({ navigation }) {
     setFilteredData(temp);
   }, [search, sortAsc, filter, data]);
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => navigation.navigate('Detail', { url: `https://pokeapi.co/api/v2/pokemon/${item.id}/` })}
-    >
-      <Image source={{ uri: item.sprites.front_default }} style={styles.image} />
-      <View>
-        <Text style={styles.itemText}>{item.name}</Text>
-        <Text style={styles.typeText}>{item.types.map(t => t.type.name).join(', ')}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   if (loading) return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
   if (error) return <Text style={styles.centerText}>Error fetching Pokémon!</Text>;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+    <View style={styles.container}>
       <SearchSortBar
         search={search}
         setSearch={setSearch}
@@ -76,11 +64,22 @@ export default function HomeScreen({ navigation }) {
         filter={filter}
         setFilter={setFilter}
       />
-      {filteredData.length === 0 && <Text style={styles.centerText}>No Pokémon found.</Text>}
-      {filteredData.length > 0 && (
+
+      {filteredData.length === 0 ? (
+        <Text style={styles.centerText}>No Pokémon found.</Text>
+      ) : (
         <FlashList
           data={filteredData}
-          renderItem={renderItem}
+          renderItem={({ item }) => (
+            <PokemonCard
+              item={item}
+              onPress={() =>
+                navigation.navigate('Detail', {
+                  url: `https://pokeapi.co/api/v2/pokemon/${item.id}/`,
+                })
+              }
+            />
+          )}
           keyExtractor={item => item.id.toString()}
           estimatedItemSize={80}
           contentContainerStyle={{ paddingBottom: 20 }}
@@ -91,36 +90,7 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'white',
-    padding: 15,
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  image: {
-    width: 60,
-    height: 60,
-    marginRight: 15,
-  },
-  itemText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    textTransform: 'capitalize',
-  },
-  typeText: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 2,
-    textTransform: 'capitalize',
-  },
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
   centerText: {
     marginTop: 50,
     textAlign: 'center',

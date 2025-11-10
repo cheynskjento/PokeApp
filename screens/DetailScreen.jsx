@@ -31,14 +31,13 @@ export default function DetailScreen({ route }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
-        {/* Header */}
+
         <Text style={styles.name}>{pokemon.name}</Text>
         <Image
           source={{ uri: pokemon.sprites.other['official-artwork'].front_default }}
           style={styles.image}
         />
 
-        {/* Types */}
         <View style={styles.typesContainer}>
           {pokemon.types.map(t => (
             <View
@@ -50,7 +49,6 @@ export default function DetailScreen({ route }) {
           ))}
         </View>
 
-        {/* Basic Info */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Basic Info</Text>
           <Text style={styles.detail}>Height: {pokemon.height}</Text>
@@ -58,7 +56,7 @@ export default function DetailScreen({ route }) {
           <Text style={styles.detail}>Base Experience: {pokemon.base_experience}</Text>
         </View>
 
-        {/* Abilities */}
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Abilities</Text>
           {pokemon.abilities.map(a => (
@@ -68,7 +66,7 @@ export default function DetailScreen({ route }) {
           ))}
         </View>
 
-        {/* Stats */}
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Stats</Text>
           {pokemon.stats.map(s => (
@@ -79,7 +77,7 @@ export default function DetailScreen({ route }) {
           ))}
         </View>
 
-        {/* Moves */}
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Top Moves</Text>
           {pokemon.moves.slice(0, 10).map(m => (
